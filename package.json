@@ -1,0 +1,22 @@
+{
+  "name": "square-order-automation",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/logankuzyk/square-order-automation.git"
+  },
+  "author": "Logan Kuzyk",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/logankuzyk/square-order-automation/issues"
+  },
+  "homepage": "https://github.com/logankuzyk/square-order-automation#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0"
+  }
+}
