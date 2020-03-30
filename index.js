@@ -1,9 +1,10 @@
 const fs = require('fs');
 const readline = require('readline');
 const {google} = require('googleapis');
-const env = require('dotenv').config()
+const env = require('dotenv').config();
+const write = require('write');
 
-const SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive'];
+const SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/documents'];
 const TOKEN_PATH = 'token.json';
 const API_KEY = process.env.API_KEY
 
@@ -91,6 +92,11 @@ function processSheet(auth, id) {
                             'country': 'CA',
                             'type': row[2],
                         }
+                        if (row[27] != undefined) {
+                            output.orders[row[0]].post = row[27].replace(/ /g, '');
+                        } else {
+                            output.orders[row[0]].post = undefined;
+                        }
                     }
                     if (row[33] == undefined) {
                     } else if (output.orders[row[0]].type != 'pending') {
@@ -105,8 +111,42 @@ function processSheet(auth, id) {
         } else {
           console.log('No data found.');
         }
-        console.log(output)
-        
+        navigate(auth);
+        return;
     });
 }
 
+function navigate(auth) {
+    output.navigate = [];
+    for (let key of Object.keys(output.orders)) {
+        output.orders[key].link = '';
+        output.orders[key].link = 'https://www.google.com/maps/search/?api=1&query=' + output.orders[key].street;
+        if (output.orders[key].post != undefined) {
+            output.navigate.push([output.orders[key].post, key]);
+        }
+    }
+    output.navigate.sort();
+    makeDoc(auth);
+    return;
+}
+
+function makeDoc(auth) {
+    let date = new Date();
+    let final = '';
+    for (let header of Object.keys(output)) {
+        if (header == 'orders') {
+            continue;
+        }
+        final += header.toUpperCase() + '\n';
+        if (header == 'navigate') {
+            for (let member of output.navigate) {
+                final += output.orders[member[1]].link + '\n';
+            }
+        } else if (header == 'picklist') {
+            for (let key of Object.keys(output[header])) {
+                final += output[header][key] + ' of ' + key + '\n';
+            }
+        }
+    }
+    write.sync(date.toDateString() + ' Beer Deliveries' + '.txt', final, {overwrite: true});
+}
