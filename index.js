@@ -1,12 +1,10 @@
 const fs = require('fs');
 const readline = require('readline');
 const {google} = require('googleapis');
-const env = require('dotenv').config();
 const write = require('write');
 
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/documents'];
 const TOKEN_PATH = 'token.json';
-const API_KEY = process.env.API_KEY
 
 let output = {}
 
@@ -144,7 +142,7 @@ function makeDoc(auth) {
             }
         } else if (header == 'picklist') {
             for (let key of Object.keys(output[header])) {
-                final += output[header][key] + ' of ' + key + '\n';
+                final += output[header][key] + ', ' + key + '\n';
             }
         }
     }
