@@ -79,9 +79,8 @@ function processSheet(auth, id) {
         const rows = res.data.values;
         if (rows.length) {
             rows.map((row) => {
-                if (row[0] == undefined) {
-                } else {
-                    if (output.orders[row[0]] == undefined && row[2] != undefined) {
+                if (row[0] != undefined) {
+                    if (output.orders[row[0]] == undefined && row[2] == 'pending') {
                         output.orders[row[0]] = {
                             'name': row[14] + ' ' + row[15],
                             'street': row[17].replace(/ /g, '+'),
@@ -97,8 +96,6 @@ function processSheet(auth, id) {
                         }
                     }
                     if (row[33] == undefined) {
-                    } else if (output.orders[row[0]].type != 'pending') {
-                        delete output.orders[row[0]];
                     } else if (output.picklist[row[33]] == undefined) {
                         output.picklist[row[33]] = Number(row[35]);
                     } else {
@@ -121,6 +118,8 @@ function navigate(auth) {
         output.orders[key].link = 'https://www.google.com/maps/search/?api=1&query=' + output.orders[key].street;
         if (output.orders[key].post != undefined) {
             output.navigate.push([output.orders[key].post, key]);
+        } else {
+            output.navigate.push(['', key]);
         }
     }
     output.navigate.sort();
