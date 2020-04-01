@@ -80,7 +80,7 @@ function processSheet(auth, id) {
         if (rows.length) {
             rows.map((row) => {
                 if (row[0] != undefined) {
-                    if (output.orders[row[0]] == undefined && row[2] == 'pending') {
+                    if (output.orders[row[0]] == undefined && row[2] != undefined) {
                         output.orders[row[0]] = {
                             'name': row[14] + ' ' + row[15],
                             'street': row[17].replace(/ /g, '+'),
@@ -95,11 +95,19 @@ function processSheet(auth, id) {
                             output.orders[row[0]].post = undefined;
                         }
                     }
-                    if (row[33] == undefined) {
-                    } else if (output.picklist[row[33]] == undefined) {
-                        output.picklist[row[33]] = Number(row[35]);
-                    } else {
-                        output.picklist[row[33]]++;
+                    
+                    if (row[33] != undefined) {
+                        if (row[33].toUpperCase().includes('KEG')) {
+                            row[33] += ' ' + row[34];
+                        }
+                        
+                        if (output.orders[row[0]].type != 'pending') {
+                            delete output.orders[row[0]];
+                        } else if (output.picklist[row[33]] == undefined) {
+                            output.picklist[row[33]] = Number(row[35]);
+                        } else {
+                            output.picklist[row[33]]++;
+                        }
                     }
                 }
             });
@@ -137,7 +145,7 @@ function makeDoc(auth) {
         final += header.toUpperCase() + '\n';
         if (header == 'navigate') {
             for (let member of output.navigate) {
-                final += output.orders[member[1]].link + '\n';
+                final += member[1] + ', ' + output.orders[member[1]].link + '\n';
             }
         } else if (header == 'picklist') {
             for (let key of Object.keys(output[header])) {
