@@ -73,7 +73,7 @@ function processSheet(auth, id) {
     output.orders = {}
     sheets.spreadsheets.values.get({
         spreadsheetId: id,
-        range: 'A2:AJ',
+        range: 'D2:AM',
       }, (err, res) => {
         if (err) return console.log('The API returned an error: ' + err);
         const rows = res.data.values;
@@ -147,4 +147,5 @@ function makeDoc(auth) {
         }
     }
     write.sync(date.toDateString() + ' Beer Deliveries' + '.txt', final, {overwrite: true});
+    console.log('The text file has been generated.')
 }
