@@ -96,17 +96,19 @@ function processSheet(auth, id) {
                         }
                     }
                     
-                    if (row[33] != undefined) {
-                        if (row[33].toUpperCase().includes('KEG')) {
-                            row[33] += ' ' + row[34];
-                        }
-                        
-                        if (output.orders[row[0]].type != 'pending') {
-                            delete output.orders[row[0]];
-                        } else if (output.picklist[row[33]] == undefined) {
-                            output.picklist[row[33]] = Number(row[35]);
-                        } else {
-                            output.picklist[row[33]]++;
+                    if (output.orders[row[0]].type != 'pending') {
+                        delete output.orders[row[0]];
+                    } else {
+                        if (row[33] != undefined) {
+                            if (row[33].toUpperCase().includes('KEG')) {
+                                row[33] += ' ' + row[34];
+                            }
+                            
+                            if (output.picklist[row[33]] == undefined) {
+                                output.picklist[row[33]] = Number(row[35]);
+                            } else {
+                                output.picklist[row[33]] += Number(row[35]);
+                            }
                         }
                     }
                 }
@@ -138,6 +140,7 @@ function navigate(auth) {
 function makeDoc(auth) {
     let date = new Date();
     let final = '';
+    console.log(output.picklist)
     for (let header of Object.keys(output)) {
         if (header == 'orders') {
             continue;
