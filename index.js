@@ -88,7 +88,6 @@ function processSheet(auth, id) {
                             'province': 'BC',
                             'country': 'CA',
                             'type': row[2],
-                            'date': row[43],
                         }
                         if (row[27] != undefined) {
                             output.orders[row[0]].post = row[27].replace(/ /g, '');
@@ -96,7 +95,8 @@ function processSheet(auth, id) {
                             output.orders[row[0]].post = undefined;
                         }
                     }
-                    if (output.orders[row[0]].type != 'pending' || output.orders[row[0]].date != undefined) {
+                    console.log(output.orders[row[0]].date != undefined)
+                    if (output.orders[row[0]].type != 'pending' || row[43] != undefined) {
                         delete output.orders[row[0]];
                     } else {
                         if (row[33] != undefined) {
