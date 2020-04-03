@@ -73,14 +73,14 @@ function processSheet(auth, id) {
     output.orders = {}
     sheets.spreadsheets.values.get({
         spreadsheetId: id,
-        range: 'D2:AM',
+        range: 'D2:AU',
       }, (err, res) => {
         if (err) return console.log('The API returned an error: ' + err);
         const rows = res.data.values;
         if (rows.length) {
             rows.map((row) => {
                 if (row[0] != undefined) {
-                    if (output.orders[row[0]] == undefined && row[2] != undefined && row[11] == undefined) {
+                    if (output.orders[row[0]] == undefined && row[2] != undefined) {
                         output.orders[row[0]] = {
                             'name': row[14] + ' ' + row[15],
                             'street': row[17].replace(/ /g, '+'),
@@ -88,6 +88,7 @@ function processSheet(auth, id) {
                             'province': 'BC',
                             'country': 'CA',
                             'type': row[2],
+                            'date': row[43],
                         }
                         if (row[27] != undefined) {
                             output.orders[row[0]].post = row[27].replace(/ /g, '');
@@ -95,8 +96,7 @@ function processSheet(auth, id) {
                             output.orders[row[0]].post = undefined;
                         }
                     }
-                    
-                    if (output.orders[row[0]].type != 'pending') {
+                    if (output.orders[row[0]].type != 'pending' || output.orders[row[0]].date != undefined) {
                         delete output.orders[row[0]];
                     } else {
                         if (row[33] != undefined) {
