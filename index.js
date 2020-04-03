@@ -80,7 +80,7 @@ function processSheet(auth, id) {
         if (rows.length) {
             rows.map((row) => {
                 if (row[0] != undefined) {
-                    if (output.orders[row[0]] == undefined && row[2] != undefined) {
+                    if (output.orders[row[0]] == undefined && row[2] != undefined && row[11] == undefined) {
                         output.orders[row[0]] = {
                             'name': row[14] + ' ' + row[15],
                             'street': row[17].replace(/ /g, '+'),
@@ -156,6 +156,6 @@ function makeDoc(auth) {
             }
         }
     }
-    write.sync(date.toDateString() + ' Beer Deliveries' + '.txt', final, {overwrite: true});
+    write.sync(date.toDateString() + ' Beer Deliveries' + '.csv', final, {overwrite: true});
     console.log('The text file has been generated.')
 }
