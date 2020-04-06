@@ -132,7 +132,7 @@ function navigate(auth) {
             output.navigate.push(['', key]);
         }
     }
-    output.navigate.sort();
+    // output.navigate.sort();
     makeDoc(auth);
     return;
 }
