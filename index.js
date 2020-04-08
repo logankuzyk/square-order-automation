@@ -69,8 +69,9 @@ function openSheet(auth) {
 
 function processSheet(auth, id) {
     const sheets = google.sheets({version: 'v4', auth});
-    output.picklist = {}
-    output.orders = {}
+    output.picklist = {};
+    output.orders = {};
+    output.removed = {};
     sheets.spreadsheets.values.get({
         spreadsheetId: id,
         range: 'D2:AU',
@@ -96,8 +97,12 @@ function processSheet(auth, id) {
                         }
                     }
                     console.log(output.orders[row[0]].date != undefined)
-                    if (output.orders[row[0]].type != 'pending' || row[43] != undefined) {
+                    if (output.orders[row[0]].type != 'pending') {
                         delete output.orders[row[0]];
+                        output.removed[row[0]] = 'not a pending order.';
+                    } else if (row[43] != undefined) {
+                        delete output.orders[row[0]];
+                        output.removed[row[0]] = 'pickup order.';
                     } else {
                         if (row[33] != undefined) {
                             if (row[33].toUpperCase().includes('KEG')) {
@@ -122,6 +127,7 @@ function processSheet(auth, id) {
 }
 
 function navigate(auth) {
+    console.log(output);
     output.navigate = [];
     for (let key of Object.keys(output.orders)) {
         output.orders[key].link = '';
@@ -132,7 +138,7 @@ function navigate(auth) {
             output.navigate.push(['', key]);
         }
     }
-    output.navigate.sort();
+    // output.navigate.sort();
     makeDoc(auth);
     return;
 }
@@ -153,6 +159,10 @@ function makeDoc(auth) {
         } else if (header == 'picklist') {
             for (let key of Object.keys(output[header])) {
                 final += output[header][key] + ', ' + key + '\n';
+            }
+        } else if (header == 'removed') {
+            for (let key of Object.keys(output[header])) {
+                final += key + ' removed: ' + output[header][key] + '\n';
             }
         }
     }
