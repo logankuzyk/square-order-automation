@@ -84,7 +84,7 @@ function processSheet(auth, id) {
                     if (output.orders[row[0]] == undefined && row[2] != undefined) {
                         output.orders[row[0]] = {
                             'name': row[14] + ' ' + row[15],
-                            'street': row[17].replace(/ /g, '+'),
+                            'street': row[17].replace(/,/g, ''),
                             'city': 'Victoria',
                             'province': 'BC',
                             'country': 'CA',
@@ -133,7 +133,7 @@ function makeCircuit(auth) {
     output.circuit = [];
     for (let key of Object.keys(output.orders)) {
         output.orders[key].circuit = '';
-        output.orders[key].circuit += output.orders[key].street + ',,' + output.orders[key].city + ',,' + output.orders[key].province + ',,' + output.orders[key].post + ',,' + output.orders[key].email + ',,' + output.orders[key].phone;
+        output.orders[key].circuit += output.orders[key].street + ',' + output.orders[key].city + ',' + output.orders[key].province + ',' + output.orders[key].post + ',' + output.orders[key].email + ',' + output.orders[key].phone;
         if (output.orders[key].post != undefined) {
             output.circuit.push([output.orders[key].post, key]);
         } else {
