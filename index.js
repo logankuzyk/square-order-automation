@@ -89,11 +89,13 @@ function processSheet(auth, id) {
                             'province': 'BC',
                             'country': 'CA',
                             'type': row[2],
+                            'phone': row[23],
+                            'email': row[16],
                         }
                         if (row[27] != undefined) {
                             output.orders[row[0]].post = row[27].replace(/ /g, '');
                         } else {
-                            output.orders[row[0]].post = undefined;
+                            output.orders[row[0]].post = '';
                         }
                     }
                     console.log(output.orders[row[0]].date != undefined)
@@ -121,24 +123,23 @@ function processSheet(auth, id) {
         } else {
           console.log('No data found.');
         }
-        navigate(auth);
+        makeCircuit(auth);
         return;
     });
 }
-
-function navigate(auth) {
+// shipping, city, province, zip, email, phone number (headers)
+function makeCircuit(auth) {
     console.log(output);
-    output.navigate = [];
+    output.circuit = [];
     for (let key of Object.keys(output.orders)) {
-        output.orders[key].link = '';
-        output.orders[key].link = 'https://www.google.com/maps/search/?api=1&query=' + output.orders[key].street;
+        output.orders[key].circuit = '';
+        output.orders[key].circuit += output.orders[key].street + ',,' + output.orders[key].city + ',,' + output.orders[key].province + ',,' + output.orders[key].post + ',,' + output.orders[key].email + ',,' + output.orders[key].phone;
         if (output.orders[key].post != undefined) {
-            output.navigate.push([output.orders[key].post, key]);
+            output.circuit.push([output.orders[key].post, key]);
         } else {
-            output.navigate.push(['', key]);
+            output.circuit.push(['', key]);
         }
     }
-    // output.navigate.sort();
     makeDoc(auth);
     return;
 }
@@ -152,9 +153,9 @@ function makeDoc(auth) {
             continue;
         }
         final += header.toUpperCase() + '\n';
-        if (header == 'navigate') {
-            for (let member of output.navigate) {
-                final += member[1] + ', ' + output.orders[member[1]].link + '\n';
+        if (header == 'circuit') {
+            for (let member of output.circuit) {
+                final += output.orders[member[1]].circuit + '\n';
             }
         } else if (header == 'picklist') {
             for (let key of Object.keys(output[header])) {
