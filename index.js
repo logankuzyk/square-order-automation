@@ -129,7 +129,7 @@ function processSheet(auth, id) {
 }
 // shipping, city, province, zip, email, phone number (headers)
 function makeCircuit(auth) {
-    output.circuit = 'Street,City,Province,ZIP,Email,Phone,\n';
+    output.circuit = 'Street,City,Province,ZIP,Email,Phone\n';
     for (let key of Object.keys(output.orders)) {
         output.circuit += output.orders[key].street + ',' + output.orders[key].city + ',' + output.orders[key].province + ',' + output.orders[key].post + ',' + output.orders[key].email + ',' + output.orders[key].phone + '\n';
     }
