@@ -129,16 +129,9 @@ function processSheet(auth, id) {
 }
 // shipping, city, province, zip, email, phone number (headers)
 function makeCircuit(auth) {
-    console.log(output);
-    output.circuit = [];
+    output.circuit = 'Street,City,Province,ZIP,Email,Phone,\n';
     for (let key of Object.keys(output.orders)) {
-        output.orders[key].circuit = '';
-        output.orders[key].circuit += output.orders[key].street + ',' + output.orders[key].city + ',' + output.orders[key].province + ',' + output.orders[key].post + ',' + output.orders[key].email + ',' + output.orders[key].phone;
-        if (output.orders[key].post != undefined) {
-            output.circuit.push([output.orders[key].post, key]);
-        } else {
-            output.circuit.push(['', key]);
-        }
+        output.circuit += output.orders[key].street + ',' + output.orders[key].city + ',' + output.orders[key].province + ',' + output.orders[key].post + ',' + output.orders[key].email + ',' + output.orders[key].phone + '\n';
     }
     makeDoc(auth);
     return;
@@ -146,27 +139,22 @@ function makeCircuit(auth) {
 
 function makeDoc(auth) {
     let date = new Date();
-    let final = '';
-    console.log(output.picklist)
+    let picklist = '';
+    console.log(output);
+    console.log(Object.keys(output));
     for (let header of Object.keys(output)) {
-        if (header == 'orders') {
-            continue;
-        }
-        final += header.toUpperCase() + '\n';
-        if (header == 'circuit') {
-            for (let member of output.circuit) {
-                final += output.orders[member[1]].circuit + '\n';
-            }
-        } else if (header == 'picklist') {
+        picklist += header.toUpperCase() + '\n';
+        if (header == 'picklist') {
             for (let key of Object.keys(output[header])) {
-                final += output[header][key] + ', ' + key + '\n';
+                picklist += output[header][key] + ', ' + key + '\n';
             }
         } else if (header == 'removed') {
             for (let key of Object.keys(output[header])) {
-                final += key + ' removed: ' + output[header][key] + '\n';
+                picklist += key + ' removed: ' + output[header][key] + '\n';
             }
         }
     }
-    write.sync(date.toDateString() + ' Beer Deliveries' + '.csv', final, {overwrite: true});
-    console.log('The text file has been generated.')
+    write.sync(date.toDateString() + ' Picklist' + '.csv', picklist, {overwrite: true});
+    write.sync(date.toDateString() + ' Circuit' + '.csv', output.circuit, {overwrite: true});
+    console.log('The text file has been generated.');
 }
