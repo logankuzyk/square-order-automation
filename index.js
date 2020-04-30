@@ -98,7 +98,7 @@ function processSheet(auth, id) {
                             output.orders[row[0]].post = '';
                         }
                     }
-                    console.log(output.orders[row[0]].date != undefined)
+
                     if (output.orders[row[0]].type != 'pending') {
                         delete output.orders[row[0]];
                         output.removed[row[0]] = 'not a pending order.';
@@ -106,11 +106,15 @@ function processSheet(auth, id) {
                         delete output.orders[row[0]];
                         output.removed[row[0]] = 'pickup order.';
                     } else {
-                        if (row[33] != undefined) {
+                        if (row[33] != '' && row[33] != undefined) {
                             if (row[33].toUpperCase().includes('KEG')) {
                                 row[33] += ' ' + row[34];
                             }
                             
+                            if (row[33].toUpperCase().includes('FLAT')) {
+                                row[33] += ' ' + row[34];
+                            }
+
                             if (output.picklist[row[33]] == undefined) {
                                 output.picklist[row[33]] = Number(row[35]);
                             } else {
@@ -141,14 +145,14 @@ function makeDoc(auth) {
     let date = new Date();
     let picklist = '';
     console.log(output);
-    console.log(Object.keys(output));
     for (let header of Object.keys(output)) {
-        picklist += header.toUpperCase() + '\n';
         if (header == 'picklist') {
+            picklist += header.toUpperCase() + '\n';
             for (let key of Object.keys(output[header])) {
                 picklist += output[header][key] + ', ' + key + '\n';
             }
         } else if (header == 'removed') {
+            picklist += header.toUpperCase() + '\n';
             for (let key of Object.keys(output[header])) {
                 picklist += key + ' removed: ' + output[header][key] + '\n';
             }
