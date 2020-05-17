@@ -1,5 +1,5 @@
-BCLDB CSV Export Tool
-=====================
+Square Local Delivery Automation Tool
+=====================================
 
 Installing Node
 ---------------
